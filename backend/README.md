@@ -2,8 +2,6 @@
 
 A TypeScript/Node.js backend for the LeetCode tracker application, providing REST APIs for persistent data storage.
 
-(100% built by Claude 🤖)
-
 ## Setup and Development
 
 ### Prerequisites
