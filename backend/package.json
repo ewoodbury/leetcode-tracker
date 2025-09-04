@@ -1,0 +1,27 @@
+{
+  "name": "leetcode-tracker-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@fastify/cors": "^8.4.0",
+    "csv-parser": "^3.0.0",
+    "csv-writer": "^1.6.0",
+    "date-fns": "^2.30.0",
+    "fastify": "^4.24.3",
+    "pino-pretty": "^13.1.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  }
+}
