@@ -4,6 +4,8 @@ A TypeScript-based web application to track LeetCode practice progress with spac
 
 (100% written by Claude 🤖)
 
+![Screenshot](image.png)
+
 ## Features
 
 - **Question Management**: Track progress on NeetCode 150 and custom questions
