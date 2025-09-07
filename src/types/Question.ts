@@ -3,6 +3,7 @@ export interface Question {
   name: string;
   category: string;
   leetcodeUrl: string;
+  leetcodeDifficulty?: 'Easy' | 'Medium' | 'Hard';
   status: 'not_started' | 'completed' | 'under_review' | 'needs_attention';
   firstCompleted?: string; // ISO date string
   lastReviewed?: string;   // ISO date string
@@ -17,6 +18,7 @@ export interface QuestionCSVRow {
   name: string;
   category: string;
   leetcode_url: string;
+  leetcode_difficulty: string;
   status: string;
   first_completed: string;
   last_reviewed: string;

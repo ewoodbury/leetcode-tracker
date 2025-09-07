@@ -10,6 +10,7 @@ interface QuestionCSVRow {
   name: string;
   category: string;
   leetcode_url: string;
+  leetcode_difficulty: string;
   status: string;
   first_completed: string;
   last_reviewed: string;
@@ -22,7 +23,7 @@ interface QuestionCSVRow {
 export class CSVService {
   private readonly csvPath = config.csvPath;
   private readonly headers = [
-    'id', 'name', 'category', 'leetcode_url', 'status',
+    'id', 'name', 'category', 'leetcode_url', 'leetcode_difficulty', 'status',
     'first_completed', 'last_reviewed', 'next_review',
     'review_count', 'difficulty_history', 'notes'
   ];
@@ -72,6 +73,7 @@ export class CSVService {
       name: row.name || '',
       category: row.category || '',
       leetcodeUrl: row.leetcode_url || '',
+      leetcodeDifficulty: row.leetcode_difficulty as Question['leetcodeDifficulty'] || undefined,
       status: (row.status as Question['status']) || 'not_started',
       firstCompleted: row.first_completed || undefined,
       lastReviewed: row.last_reviewed || undefined,
@@ -90,6 +92,7 @@ export class CSVService {
       name: question.name,
       category: question.category,
       leetcode_url: question.leetcodeUrl,
+      leetcode_difficulty: question.leetcodeDifficulty || '',
       status: question.status,
       first_completed: question.firstCompleted || '',
       last_reviewed: question.lastReviewed || '',

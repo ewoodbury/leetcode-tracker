@@ -3,6 +3,7 @@ export interface Question {
   name: string;
   category: string;
   leetcodeUrl: string;
+  leetcodeDifficulty?: 'Easy' | 'Medium' | 'Hard';
   status: 'not_started' | 'completed' | 'under_review' | 'needs_attention';
   firstCompleted?: string; // ISO date string
   lastReviewed?: string;   // ISO date string
@@ -16,6 +17,7 @@ export interface CreateQuestionRequest {
   name: string;
   category: string;
   leetcodeUrl: string;
+  leetcodeDifficulty?: 'Easy' | 'Medium' | 'Hard';
   notes?: string;
 }
 

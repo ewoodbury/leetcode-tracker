@@ -78,6 +78,19 @@ export default function QuestionList({ questions, onUpdateQuestions }: QuestionL
     }
   };
 
+  const getDifficultyColor = (difficulty?: "Easy" | "Medium" | "Hard") => {
+    switch (difficulty) {
+      case "Easy":
+        return "#10b981";
+      case "Medium":
+        return "#f59e0b";
+      case "Hard":
+        return "#ef4444";
+      default:
+        return "#6b7280";
+    }
+  };
+
   const getStatusIcon = (question: Question) => {
     if (question.status === 'not_started') return '⭕';
     if (question.status === 'needs_attention') return '❌';
@@ -117,41 +130,59 @@ export default function QuestionList({ questions, onUpdateQuestions }: QuestionL
               className="category-header"
               onClick={() => toggleCategory(category)}
             >
-              <span className="category-toggle">{isExpanded ? '▼' : '▶'}</span>
+              <span className="category-toggle">{isExpanded ? "▼" : "▶"}</span>
               <span className="category-name">{category}</span>
               <span className="category-progress">
                 ({completedCount}/{categoryQuestions.length})
               </span>
             </button>
-            
+
             {isExpanded && (
               <div className="questions-grid">
-                {categoryQuestions.map(question => (
+                {categoryQuestions.map((question) => (
                   <div key={question.id} className="question-card">
-                    <div className="question-header">
-                      <span className="status-icon" title={getStatusText(question)}>
+                    <div className="question-main">
+                      <span
+                        className="status-icon"
+                        title={getStatusText(question)}
+                      >
                         {getStatusIcon(question)}
                       </span>
-                      <a 
-                        href={question.leetcodeUrl} 
-                        target="_blank" 
+                      <a
+                        href={question.leetcodeUrl}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="question-name"
                         title={question.name}
                       >
                         {question.name}
                       </a>
+                      {question.leetcodeDifficulty && (
+                        <span
+                          className={`difficulty-badge ${question.leetcodeDifficulty.toLowerCase()}`}
+                        >
+                          {question.leetcodeDifficulty}
+                        </span>
+                      )}
                     </div>
-                    
+
                     <div className="question-details">
                       {question.lastReviewed && (
                         <div className="question-date">
-                          Last: {new Date(question.lastReviewed).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          Last:{" "}
+                          {new Date(question.lastReviewed).toLocaleDateString(
+                            "en-US",
+                            { month: "short", day: "numeric" }
+                          )}
                         </div>
                       )}
                       {question.nextReview && (
                         <div className="question-date">
-                          Next: {new Date(question.nextReview).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          Next:{" "}
+                          {new Date(question.nextReview).toLocaleDateString(
+                            "en-US",
+                            { month: "short", day: "numeric" }
+                          )}
                         </div>
                       )}
                       {question.reviewCount > 0 && (
@@ -165,31 +196,33 @@ export default function QuestionList({ questions, onUpdateQuestions }: QuestionL
                       <input
                         type="text"
                         placeholder="Add notes..."
-                        value={question.notes || ''}
-                        onChange={(e) => updateQuestionNotes(question.id, e.target.value)}
+                        value={question.notes || ""}
+                        onChange={(e) =>
+                          updateQuestionNotes(question.id, e.target.value)
+                        }
                       />
                     </div>
-                    
+
                     <div className="question-actions">
-                      {question.status === 'not_started' && (
+                      {question.status === "not_started" && (
                         <div className="completion-actions">
                           <span>Mark as:</span>
                           <button
-                            onClick={() => markCompleted(question.id, 'easy')}
+                            onClick={() => markCompleted(question.id, "easy")}
                             className="action-button easy"
                             title="Easy - next review in 1 day"
                           >
                             Easy
                           </button>
                           <button
-                            onClick={() => markCompleted(question.id, 'medium')}
+                            onClick={() => markCompleted(question.id, "medium")}
                             className="action-button medium"
                             title="Medium - next review in 1 day"
                           >
                             Medium
                           </button>
                           <button
-                            onClick={() => markCompleted(question.id, 'hard')}
+                            onClick={() => markCompleted(question.id, "hard")}
                             className="action-button hard"
                             title="Hard - next review in 1 day"
                           >
@@ -197,8 +230,8 @@ export default function QuestionList({ questions, onUpdateQuestions }: QuestionL
                           </button>
                         </div>
                       )}
-                      
-                      {question.status !== 'not_started' && (
+
+                      {question.status !== "not_started" && (
                         <button
                           onClick={() => markNotStarted(question.id)}
                           className="action-button undo"
@@ -207,30 +240,34 @@ export default function QuestionList({ questions, onUpdateQuestions }: QuestionL
                           Undo
                         </button>
                       )}
-                      
-                      {question.status !== 'not_started' && question.nextReview && isDueForReview(question.nextReview) && (
-                        <div className="review-actions">
-                          <span>Review:</span>
-                          <button
-                            onClick={() => markReviewed(question.id, 'easy')}
-                            className="action-button easy"
-                          >
-                            Easy
-                          </button>
-                          <button
-                            onClick={() => markReviewed(question.id, 'medium')}
-                            className="action-button medium"
-                          >
-                            Medium
-                          </button>
-                          <button
-                            onClick={() => markReviewed(question.id, 'hard')}
-                            className="action-button hard"
-                          >
-                            Hard
-                          </button>
-                        </div>
-                      )}
+
+                      {question.status !== "not_started" &&
+                        question.nextReview &&
+                        isDueForReview(question.nextReview) && (
+                          <div className="review-actions">
+                            <span>Review:</span>
+                            <button
+                              onClick={() => markReviewed(question.id, "easy")}
+                              className="action-button easy"
+                            >
+                              Easy
+                            </button>
+                            <button
+                              onClick={() =>
+                                markReviewed(question.id, "medium")
+                              }
+                              className="action-button medium"
+                            >
+                              Medium
+                            </button>
+                            <button
+                              onClick={() => markReviewed(question.id, "hard")}
+                              className="action-button hard"
+                            >
+                              Hard
+                            </button>
+                          </div>
+                        )}
                     </div>
                   </div>
                 ))}

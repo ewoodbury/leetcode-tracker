@@ -9,6 +9,8 @@ export const QuestionStatusSchema = z.enum([
 
 export const DifficultySchema = z.enum(['easy', 'medium', 'hard']);
 
+export const LeetCodeDifficultySchema = z.enum(['Easy', 'Medium', 'Hard']);
+
 export const QuestionSchema = z.object({
   id: z.number().int().positive(),
   name: z.string().min(1).max(200),
@@ -17,6 +19,7 @@ export const QuestionSchema = z.object({
     (url) => url.includes('leetcode.com/problems/'),
     { message: 'Must be a valid LeetCode problem URL' }
   ),
+  leetcodeDifficulty: LeetCodeDifficultySchema.optional(),
   status: QuestionStatusSchema,
   firstCompleted: z.string().datetime().optional(),
   lastReviewed: z.string().datetime().optional(),
@@ -33,6 +36,7 @@ export const CreateQuestionSchema = z.object({
     (url) => url.includes('leetcode.com/problems/'),
     { message: 'Must be a valid LeetCode problem URL' }
   ),
+  leetcodeDifficulty: LeetCodeDifficultySchema.optional(),
   notes: z.string().max(1000).optional()
 });
 

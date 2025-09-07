@@ -45,6 +45,9 @@ export default function AddQuestion({ questions, onAddQuestion, onBack }: AddQue
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
   const [customCategory, setCustomCategory] = useState('');
+  const [leetcodeDifficulty, setLeetcodeDifficulty] = useState<
+    "Easy" | "Medium" | "Hard"
+  >("Medium");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -132,14 +135,15 @@ export default function AddQuestion({ questions, onAddQuestion, onBack }: AddQue
     try {
       const finalCategory = category === 'Other' ? customCategory : category;
       
-      const newQuestion: Omit<Question, 'id'> = {
+      const newQuestion: Omit<Question, "id"> = {
         name: sanitizeForCSV(name.trim()),
         category: sanitizeForCSV(finalCategory.trim()),
         leetcodeUrl: url.trim(),
-        status: 'not_started',
+        leetcodeDifficulty: leetcodeDifficulty,
+        status: "not_started",
         reviewCount: 0,
         difficultyHistory: [],
-        notes: ''
+        notes: "",
       };
 
       onAddQuestion(newQuestion);
@@ -149,6 +153,7 @@ export default function AddQuestion({ questions, onAddQuestion, onBack }: AddQue
       setName('');
       setCategory('');
       setCustomCategory('');
+      setLeetcodeDifficulty("Medium");
       setErrors({});
       
       // Go back to main view
@@ -166,6 +171,7 @@ export default function AddQuestion({ questions, onAddQuestion, onBack }: AddQue
     setName('');
     setCategory('');
     setCustomCategory('');
+    setLeetcodeDifficulty("Medium");
     setErrors({});
   };
 
@@ -187,11 +193,12 @@ export default function AddQuestion({ questions, onAddQuestion, onBack }: AddQue
             value={url}
             onChange={(e) => handleUrlChange(e.target.value)}
             placeholder="https://leetcode.com/problems/example-problem/"
-            className={errors.url ? 'error' : ''}
+            className={errors.url ? "error" : ""}
           />
           {errors.url && <span className="error-message">{errors.url}</span>}
           <small className="help-text">
-            Paste the LeetCode problem URL. The question name will be auto-generated.
+            Paste the LeetCode problem URL. The question name will be
+            auto-generated.
           </small>
         </div>
 
@@ -203,7 +210,7 @@ export default function AddQuestion({ questions, onAddQuestion, onBack }: AddQue
             value={name}
             onChange={(e) => handleNameChange(e.target.value)}
             placeholder="e.g., Two Sum"
-            className={errors.name ? 'error' : ''}
+            className={errors.name ? "error" : ""}
           />
           {errors.name && <span className="error-message">{errors.name}</span>}
         </div>
@@ -214,17 +221,21 @@ export default function AddQuestion({ questions, onAddQuestion, onBack }: AddQue
             id="category"
             value={category}
             onChange={(e) => handleCategoryChange(e.target.value)}
-            className={errors.category ? 'error' : ''}
+            className={errors.category ? "error" : ""}
           >
             <option value="">Select a category...</option>
-            {COMMON_CATEGORIES.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
+            {COMMON_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
             ))}
           </select>
-          {errors.category && <span className="error-message">{errors.category}</span>}
+          {errors.category && (
+            <span className="error-message">{errors.category}</span>
+          )}
         </div>
 
-        {category === 'Other' && (
+        {category === "Other" && (
           <div className="form-group">
             <label htmlFor="customCategory">Custom Category *</label>
             <input
@@ -233,10 +244,30 @@ export default function AddQuestion({ questions, onAddQuestion, onBack }: AddQue
               value={customCategory}
               onChange={(e) => handleCustomCategoryChange(e.target.value)}
               placeholder="Enter custom category name"
-              className={errors.category ? 'error' : ''}
+              className={errors.category ? "error" : ""}
             />
           </div>
         )}
+
+        <div className="form-group">
+          <label htmlFor="leetcodeDifficulty">LeetCode Difficulty</label>
+          <select
+            id="leetcodeDifficulty"
+            value={leetcodeDifficulty}
+            onChange={(e) =>
+              setLeetcodeDifficulty(
+                e.target.value as "Easy" | "Medium" | "Hard"
+              )
+            }
+          >
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
+          <small className="help-text">
+            Select the official LeetCode difficulty for this problem.
+          </small>
+        </div>
 
         {errors.submit && (
           <div className="error-message submit-error">{errors.submit}</div>
@@ -256,7 +287,7 @@ export default function AddQuestion({ questions, onAddQuestion, onBack }: AddQue
             className="submit-button"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Adding...' : 'Add Question'}
+            {isSubmitting ? "Adding..." : "Add Question"}
           </button>
         </div>
       </form>
@@ -264,9 +295,15 @@ export default function AddQuestion({ questions, onAddQuestion, onBack }: AddQue
       <div className="add-question-help">
         <h3>Tips:</h3>
         <ul>
-          <li>Copy the URL from your browser when viewing a LeetCode problem</li>
-          <li>The question name will be automatically generated from the URL</li>
-          <li>Choose the most appropriate category for spaced repetition grouping</li>
+          <li>
+            Copy the URL from your browser when viewing a LeetCode problem
+          </li>
+          <li>
+            The question name will be automatically generated from the URL
+          </li>
+          <li>
+            Choose the most appropriate category for spaced repetition grouping
+          </li>
           <li>You can add any LeetCode problem, not just from NeetCode 150</li>
         </ul>
       </div>
