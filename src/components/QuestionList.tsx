@@ -78,19 +78,6 @@ export default function QuestionList({ questions, onUpdateQuestions }: QuestionL
     }
   };
 
-  const getDifficultyColor = (difficulty?: "Easy" | "Medium" | "Hard") => {
-    switch (difficulty) {
-      case "Easy":
-        return "#10b981";
-      case "Medium":
-        return "#f59e0b";
-      case "Hard":
-        return "#ef4444";
-      default:
-        return "#6b7280";
-    }
-  };
-
   const getStatusIcon = (question: Question) => {
     if (question.status === 'not_started') return '⭕';
     if (question.status === 'needs_attention') return '❌';

@@ -155,7 +155,7 @@ export default function Dashboard() {
           <span className="activity-label">Reviews completed (7 days)</span>
         </div>
         <div className="activity-card">
-          <span className="activity-number">{stats.dueToday + stats.overdue}</span>
+          <span className="activity-number">{stats.inReview}</span>
           <span className="activity-label">Questions in review queue</span>
         </div>
         <div className="activity-card">
@@ -195,7 +195,7 @@ export default function Dashboard() {
           className={activeTab === 'review' ? 'active' : ''}
           onClick={() => setActiveTab('review')}
         >
-          Review Queue ({stats.dueToday + stats.overdue})
+          Review Queue ({stats.inReview})
         </button>
         <button 
           className={activeTab === 'add' ? 'active' : ''}

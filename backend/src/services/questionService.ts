@@ -187,8 +187,9 @@ export class QuestionService {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     const dueQuestions = this.questions.filter(q => {
-      if (!q.nextReview) return false;
+      if (!q.nextReview || q.nextReview === '0') return false;
       const reviewDate = new Date(q.nextReview);
+      if (isNaN(reviewDate.getTime())) return false; // Invalid date
       const reviewDateOnly = new Date(reviewDate.getFullYear(), reviewDate.getMonth(), reviewDate.getDate());
       return reviewDateOnly <= today;
     });
@@ -224,8 +225,9 @@ export class QuestionService {
 
     // Calculate due questions inline to avoid async
     const dueQuestions = this.questions.filter(q => {
-      if (!q.nextReview) return false;
+      if (!q.nextReview || q.nextReview === '0') return false;
       const reviewDate = new Date(q.nextReview);
+      if (isNaN(reviewDate.getTime())) return false; // Invalid date
       const reviewDateOnly = new Date(reviewDate.getFullYear(), reviewDate.getMonth(), reviewDate.getDate());
       return reviewDateOnly <= today;
     });
@@ -246,9 +248,11 @@ export class QuestionService {
       q.firstCompleted && new Date(q.firstCompleted) >= weekAgo
     ).length;
 
-    const reviewedThisWeek = this.questions.filter(q => 
-      q.lastReviewed && new Date(q.lastReviewed) >= weekAgo
-    ).length;
+    const reviewedThisWeek = this.questions.filter(q => {
+      if (!q.lastReviewed || new Date(q.lastReviewed) < weekAgo) return false;
+      // Only count as a review if it's not the same as first completion (actual subsequent review)
+      return q.reviewCount > 1 && q.lastReviewed !== q.firstCompleted;
+    }).length;
 
     return {
       totalQuestions: this.questions.length,
