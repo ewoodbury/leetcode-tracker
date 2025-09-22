@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import { createReadStream } from 'fs';
+import { createReadStream, watchFile, unwatchFile } from 'fs';
 import csv from 'csv-parser';
 import * as csvWriter from 'csv-writer';
 import { config } from '../config/index.js';
@@ -27,6 +27,8 @@ export class CSVService {
     'first_completed', 'last_reviewed', 'next_review',
     'review_count', 'difficulty_history', 'notes'
   ];
+  private changeCallback?: () => void;
+  private isWatching = false;
 
   async readQuestions(): Promise<Question[]> {
     try {
@@ -101,6 +103,37 @@ export class CSVService {
       difficulty_history: question.difficultyHistory.join(','),
       notes: question.notes
     };
+  }
+
+  /**
+   * Set up file watching for CSV changes
+   */
+  watchForChanges(callback: () => void): void {
+    this.changeCallback = callback;
+    
+    if (!this.isWatching) {
+      watchFile(this.csvPath, { interval: 1000 }, (curr, prev) => {
+        // Only trigger callback if file was actually modified (not just accessed)
+        if (curr.mtime > prev.mtime) {
+          console.log('CSV file changed, notifying callback...');
+          this.changeCallback?.();
+        }
+      });
+      this.isWatching = true;
+      console.log('Started watching CSV file for changes:', this.csvPath);
+    }
+  }
+
+  /**
+   * Stop watching for file changes
+   */
+  stopWatching(): void {
+    if (this.isWatching) {
+      unwatchFile(this.csvPath);
+      this.isWatching = false;
+      this.changeCallback = undefined;
+      console.log('Stopped watching CSV file for changes');
+    }
   }
 }
 

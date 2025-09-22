@@ -4,6 +4,7 @@ export interface CreateQuestionRequest {
   name: string;
   category: string;
   leetcodeUrl: string;
+  leetcodeDifficulty?: 'Easy' | 'Medium' | 'Hard';
   notes?: string;
 }
 
@@ -157,6 +158,12 @@ class QuestionAPI {
 
   async checkHealth(): Promise<{ status: string; timestamp: string; uptime: number }> {
     return this.request<{ status: string; timestamp: string; uptime: number }>('/health');
+  }
+
+  async refreshData(): Promise<{ message: string }> {
+    return this.request<{ message: string }>('/questions/refresh', {
+      method: 'POST'
+    });
   }
 }
 

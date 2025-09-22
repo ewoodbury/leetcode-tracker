@@ -14,10 +14,16 @@ import type {
 export class QuestionService {
   private questions: Question[] = [];
   private nextId = 1;
+  private isUpdatingFromFile = false; // Flag to prevent circular updates
 
   async initialize(): Promise<void> {
     this.questions = await csvService.readQuestions();
     this.nextId = Math.max(...this.questions.map(q => q.id), 0) + 1;
+    
+    // Set up file watching to reload data when CSV is manually modified
+    csvService.watchForChanges(() => {
+      this.reloadFromFile();
+    });
   }
 
   async getAllQuestions(filters?: QuestionFilters): Promise<QuestionsResponse> {
@@ -61,6 +67,7 @@ export class QuestionService {
       name: data.name,
       category: data.category,
       leetcodeUrl: data.leetcodeUrl,
+      leetcodeDifficulty: data.leetcodeDifficulty,
       status: 'not_started',
       reviewCount: 0,
       difficultyHistory: [],
@@ -266,7 +273,40 @@ export class QuestionService {
   }
 
   private async saveQuestions(): Promise<void> {
+    // Set flag to prevent reloading when we're the ones writing
+    this.isUpdatingFromFile = true;
     await csvService.writeQuestions(this.questions);
+    // Reset flag after a short delay to allow file system to settle
+    setTimeout(() => {
+      this.isUpdatingFromFile = false;
+    }, 100);
+  }
+
+  /**
+   * Reload questions from CSV file (used when file is manually modified)
+   */
+  async reloadFromFile(): Promise<void> {
+    if (this.isUpdatingFromFile) {
+      // Don't reload if we're the ones who just wrote to the file
+      return;
+    }
+    
+    try {
+      console.log('Reloading questions from CSV file...');
+      const reloadedQuestions = await csvService.readQuestions();
+      this.questions = reloadedQuestions;
+      this.nextId = Math.max(...this.questions.map(q => q.id), 0) + 1;
+      console.log(`Reloaded ${this.questions.length} questions from CSV file`);
+    } catch (error) {
+      console.error('Error reloading questions from CSV:', error);
+    }
+  }
+
+  /**
+   * Manually refresh data from CSV file (for API endpoint)
+   */
+  async refreshFromFile(): Promise<void> {
+    await this.reloadFromFile();
   }
 }
 

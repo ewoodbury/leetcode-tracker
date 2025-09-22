@@ -99,6 +99,27 @@ export default function Dashboard() {
     }
   };
 
+  const refreshData = async () => {
+    try {
+      setLoading(true);
+      console.log("Refreshing data from CSV...");
+
+      // Tell backend to reload from CSV file
+      await questionAPI.refreshData();
+
+      // Reload all data in frontend
+      await loadInitialData();
+
+      console.log("Data refreshed successfully");
+      alert("Data refreshed from CSV file!");
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+      alert("Failed to refresh data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -136,11 +157,11 @@ export default function Dashboard() {
       <header className="dashboard-header">
         <h1>LeetCode Practice Tracker</h1>
         <div className="current-date">
-          {new Date().toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
+          {new Date().toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
           })}
         </div>
       </header>
@@ -163,7 +184,9 @@ export default function Dashboard() {
           <span className="activity-label">Overdue reviews</span>
         </div>
         <div className="activity-card">
-          <span className="activity-number">{stats.completed}/{stats.totalQuestions}</span>
+          <span className="activity-number">
+            {stats.completed}/{stats.totalQuestions}
+          </span>
           <span className="activity-label">Total progress</span>
         </div>
       </div>
@@ -176,53 +199,60 @@ export default function Dashboard() {
           type="file"
           accept=".json"
           onChange={handleFileUpload}
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
           id="file-upload"
         />
         <label htmlFor="file-upload" className="csv-button upload">
           📤 Upload Data
         </label>
+        <button
+          onClick={refreshData}
+          className="csv-button refresh"
+          disabled={loading}
+        >
+          🔄 Refresh from CSV
+        </button>
       </div>
 
       <nav className="dashboard-nav">
-        <button 
-          className={activeTab === 'all' ? 'active' : ''}
-          onClick={() => setActiveTab('all')}
+        <button
+          className={activeTab === "all" ? "active" : ""}
+          onClick={() => setActiveTab("all")}
         >
           All Questions ({stats.totalQuestions})
         </button>
-        <button 
-          className={activeTab === 'review' ? 'active' : ''}
-          onClick={() => setActiveTab('review')}
+        <button
+          className={activeTab === "review" ? "active" : ""}
+          onClick={() => setActiveTab("review")}
         >
           Review Queue ({stats.inReview})
         </button>
-        <button 
-          className={activeTab === 'add' ? 'active' : ''}
-          onClick={() => setActiveTab('add')}
+        <button
+          className={activeTab === "add" ? "active" : ""}
+          onClick={() => setActiveTab("add")}
         >
           Add Question
         </button>
       </nav>
 
       <main className="dashboard-content">
-        {activeTab === 'all' && (
-          <QuestionList 
-            questions={questions} 
-            onUpdateQuestions={updateQuestions} 
-          />
-        )}
-        {activeTab === 'review' && (
-          <ReviewQueue 
-            questions={questions} 
-            onUpdateQuestions={updateQuestions} 
-          />
-        )}
-        {activeTab === 'add' && (
-          <AddQuestion 
+        {activeTab === "all" && (
+          <QuestionList
             questions={questions}
-            onAddQuestion={addQuestion} 
-            onBack={() => setActiveTab('all')}
+            onUpdateQuestions={updateQuestions}
+          />
+        )}
+        {activeTab === "review" && (
+          <ReviewQueue
+            questions={questions}
+            onUpdateQuestions={updateQuestions}
+          />
+        )}
+        {activeTab === "add" && (
+          <AddQuestion
+            questions={questions}
+            onAddQuestion={addQuestion}
+            onBack={() => setActiveTab("all")}
           />
         )}
       </main>

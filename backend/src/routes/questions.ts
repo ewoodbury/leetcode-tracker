@@ -154,4 +154,10 @@ export async function questionRoutes(fastify: FastifyInstance) {
   fastify.get('/questions/due', async () => {
     return await questionService.getDueQuestions();
   });
+
+  // POST /api/questions/refresh
+  fastify.post('/questions/refresh', async () => {
+    await questionService.refreshFromFile();
+    return { message: 'Data refreshed from CSV file successfully' };
+  });
 }
