@@ -2,7 +2,7 @@
  * Validate LeetCode URL format
  */
 export function validateLeetCodeURL(url: string): boolean {
-  const leetcodePattern = /^https:\/\/leetcode\.com\/problems\/[a-z0-9-]+\/?$/;
+  const leetcodePattern = /^https:\/\/leetcode\.com\/problems\/[a-z0-9-]+(?:\/(?:description|solutions|discuss|submissions|editorial)?)?\/?$/;
   return leetcodePattern.test(url);
 }
 
