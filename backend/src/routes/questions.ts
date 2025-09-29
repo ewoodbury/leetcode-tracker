@@ -156,7 +156,14 @@ export async function questionRoutes(fastify: FastifyInstance) {
   });
 
   // POST /api/questions/refresh
-  fastify.post('/questions/refresh', async () => {
+  fastify.post('/questions/refresh', {
+    schema: {
+      body: {
+        type: ['object', 'null'],
+        additionalProperties: false
+      }
+    }
+  }, async () => {
     await questionService.refreshFromFile();
     return { message: 'Data refreshed from CSV file successfully' };
   });

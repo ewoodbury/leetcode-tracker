@@ -162,7 +162,11 @@ class QuestionAPI {
 
   async refreshData(): Promise<{ message: string }> {
     return this.request<{ message: string }>('/questions/refresh', {
-      method: 'POST'
+      method: 'POST',
+      body: JSON.stringify({}),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
   }
 }
