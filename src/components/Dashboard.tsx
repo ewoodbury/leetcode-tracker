@@ -66,7 +66,8 @@ export default function Dashboard() {
         name: newQuestion.name,
         category: newQuestion.category,
         leetcodeUrl: newQuestion.leetcodeUrl,
-        notes: newQuestion.notes
+        leetcodeDifficulty: newQuestion.leetcodeDifficulty,
+        notes: newQuestion.notes,
       });
       setQuestions(prev => [...prev, createdQuestion]);
       // Refresh stats after adding question
